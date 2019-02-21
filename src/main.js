@@ -9,22 +9,20 @@
   const mainFiltersBlock = document.querySelector(`.main__filter`);
   mainFiltersBlock.innerHTML = ``;
 
-  const filterTypes = [
-    `All`,
-    `Overdue`,
-    `Today`,
-    `Favorites`,
-    `Repeating`,
-    `Tags`,
-    `Archive`
+  const FilterTypes = [
+    `ALL`,
+    `OVERDUE`,
+    `TODAY`,
+    `FAVORITES`,
+    `REPEATING`,
+    `TAGS`,
+    `ARCHIVE`
   ];
 
-  const renderFilter = (filterType) => {
-    const wrapperFilter = document.createElement(`div`);
+  const getFilterTemplate = (filterType) => {
     const randomTask = Math.round(Math.random() * MAX_NUMBER_TASKS);
-
-    wrapperFilter.innerHTML = ({
-      All: `
+    const FiltersTemplates = {
+      ALL: `
         <input
           type="radio"
           id="filter__all"
@@ -36,7 +34,7 @@
           ALL <span class="filter__all-count">${randomTask}</span></label
         >
       `,
-      Overdue: `
+      OVERDUE: `
         <input
           type="radio"
           id="filter__overdue"
@@ -48,7 +46,7 @@
           >OVERDUE <span class="filter__overdue-count">${randomTask}</span></label
         >
       `,
-      Today: `
+      TODAY: `
         <input
           type="radio"
           id="filter__today"
@@ -60,7 +58,7 @@
           >TODAY <span class="filter__today-count">${randomTask}</span></label
         >
       `,
-      Favorites: `
+      FAVORITES: `
         <input
           type="radio"
           id="filter__favorites"
@@ -71,7 +69,7 @@
           >FAVORITES <span class="filter__favorites-count">${randomTask}</span></label
         >
       `,
-      Repeating: `
+      REPEATING: `
         <input
           type="radio"
           id="filter__repeating"
@@ -82,7 +80,7 @@
           >Repeating <span class="filter__repeating-count">${randomTask}</span></label
         >
       `,
-      Tags: `
+      TAGS: `
         <input
           type="radio"
           id="filter__tags"
@@ -93,7 +91,7 @@
           >Tags <span class="filter__tags-count">${randomTask}</span></label
         >
       `,
-      Archive: `
+      ARCHIVE: `
         <input
           type="radio"
           id="filter__archive"
@@ -104,7 +102,14 @@
           >ARCHIVE <span class="filter__archive-count">${randomTask}</span></label
         >
       `
-    }[filterType]);
+    };
+
+    return FiltersTemplates[filterType];
+  };
+
+  const renderFilter = (filterType) => {
+    const wrapperFilter = document.createElement(`div`);
+    wrapperFilter.innerHTML = getFilterTemplate(filterType);
 
     wrapperFilter.addEventListener(`click`, () => {
       renderSeveralCard();
@@ -176,8 +181,8 @@
     }
   };
 
-  for (let i = 0, l = filterTypes.length; i < l; i++) {
-    renderFilter(filterTypes[i]);
+  for (let i = 0, l = FilterTypes.length; i < l; i++) {
+    renderFilter(FilterTypes[i]);
   }
 
   renderSeveralCard(START_COUNT_CARD);
