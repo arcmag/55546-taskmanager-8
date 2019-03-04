@@ -9,6 +9,20 @@ const TAGS_LIST = [
   `keks`
 ];
 
+const TITLES_LIST = [
+  `Изучить теорию`,
+  `Сделать домашку`,
+  `Пройти интенсив на соточку`
+];
+
+const COLORS_LIST = [
+  `black`,
+  `yellow`,
+  `blue`,
+  `green`,
+  `pink`
+];
+
 const MAX_COUNT_TAGS = 3;
 
 const boardTasksBlock = document.querySelector(`.board__tasks`);
@@ -28,23 +42,17 @@ const getRandomTags = () => {
   return tags;
 };
 
+const getRandomTitle = () => TITLES_LIST[Math.floor(Math.random() * TITLES_LIST.length)];
+
+const getRandomColor = () => COLORS_LIST[Math.floor(Math.random() * COLORS_LIST.length)];
+
 const createRandomDataCard = () => {
   return {
-    title: [
-      `Изучить теорию`,
-      `Сделать домашку`,
-      `Пройти интенсив на соточку`
-    ][Math.floor(Math.random() * 3)],
+    title: getRandomTitle(),
     dueDate: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
     tags: new Set(getRandomTags()),
     picture: `http://picsum.photos/100/100?r=${Math.random()}.`,
-    color: [
-      `black`,
-      `yellow`,
-      `blue`,
-      `green`,
-      `pink`
-    ][Math.floor(Math.random() * 5)],
+    color: getRandomColor(),
     repeatingDays: {
       'mo': getRandomBool(),
       'tu': getRandomBool(),
