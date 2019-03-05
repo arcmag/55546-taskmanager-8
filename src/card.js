@@ -24,13 +24,13 @@ const COLORS_LIST = [
 ];
 
 const WEEK_DAYS = [
-  'mo',
-  'tu',
-  'we',
-  'th',
-  'fr',
-  'sa',
-  'su'
+  `mo`,
+  `tu`,
+  `we`,
+  `th`,
+  `fr`,
+  `sa`,
+  `su`
 ];
 
 const BOOLEANS_LIST = [
@@ -198,7 +198,7 @@ const renderCard = (dataCard) => {
       </form>
     </article>`;
 
-  boardTasksBlock.insertAdjacentHTML('afterbegin', cardString);
+  boardTasksBlock.insertAdjacentHTML(`afterbegin`, cardString);
 };
 
 const createCardsList = (number = Math.round(Math.random() * MAX_COUNT_CARD)) => {
