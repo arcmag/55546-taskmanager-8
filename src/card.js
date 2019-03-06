@@ -101,20 +101,6 @@ const renderCard = (dataCard) => {
       <label class="card__repeat-day" for="repeat-${it}-5">${it}</label>`;
   });
 
-/*
-    const weekDaysString = Object.keys(this._repeatingDays).map((it) => {
-      return `
-        <input
-          class="visually-hidden card__repeat-day-input"
-          type="checkbox"
-          id="repeat-${it}-5"
-          name="repeat"
-          value="${it}" ${this._repeatingDays[it] ? `checked` : ``}/>
-        <label class="card__repeat-day" for="repeat-${it}-5">${it}</label>`;
-    }).join(``);
-
- */
-
   dataCard.tags.forEach((it) => {
     tagsString += `
       <span class="card__hashtag-inner">
