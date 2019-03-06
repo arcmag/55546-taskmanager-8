@@ -1,11 +1,15 @@
-import {renderSeveralCard} from './card';
+import {util} from './util';
+import {renderCardsList, createCardsList, MAX_COUNT_CARD} from './card';
 
 const MAX_NUMBER_TASKS = 100;
+const MIN_NUMBER_TASKS = 0;
 
 const mainFiltersBlock = document.querySelector(`.main__filter`);
 mainFiltersBlock.innerHTML = ``;
 
-const FilterType = [
+const boardTasksBlock = document.querySelector(`.board__tasks`);
+
+const FILTERS_TYPES = [
   `add`,
   `overdue`,
   `today`,
@@ -28,25 +32,22 @@ const createFilterTemplate = (type, numberTask) => `
     >
   `;
 
-const getFilterTemplate = (filterType) => {
-  const randomNumberTask = Math.round(Math.random() * MAX_NUMBER_TASKS);
-
-  return createFilterTemplate(filterType, randomNumberTask);
-};
+const getFilterTemplate = (filterType) => createFilterTemplate(filterType, util.getRandomInt(MIN_NUMBER_TASKS, MAX_NUMBER_TASKS));
 
 const renderFilter = (filterType) => {
   const wrapperFilter = document.createElement(`div`);
   wrapperFilter.innerHTML = getFilterTemplate(filterType);
 
   wrapperFilter.addEventListener(`click`, () => {
-    renderSeveralCard();
+    boardTasksBlock.innerHTML = ``;
+    renderCardsList(createCardsList(util.getRandomInt(0, MAX_COUNT_CARD)));
   });
 
   mainFiltersBlock.appendChild(wrapperFilter);
 };
 
 const renderFiltersList = () => {
-  FilterType.forEach((it) => {
+  FILTERS_TYPES.forEach((it) => {
     renderFilter(it);
   });
 };

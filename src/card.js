@@ -1,3 +1,5 @@
+import {util} from './util';
+
 const START_COUNT_CARD = 7;
 const MAX_COUNT_CARD = 20;
 
@@ -38,35 +40,39 @@ const BOOLEANS_LIST = [
   false
 ];
 
+const URL_PICTURE = `http://picsum.photos/100/100?r=`;
+
+const MIN_COUNT_TAGS = 0;
 const MAX_COUNT_TAGS = 3;
 
 const boardTasksBlock = document.querySelector(`.board__tasks`);
 boardTasksBlock.innerHTML = ``;
 
-const getRandomBool = () => BOOLEANS_LIST[Math.floor(Math.random() * BOOLEANS_LIST.length)];
+const getRandomBool = () => util.getRandomInt(0, BOOLEANS_LIST.length - 1);
 
 const getRandomTags = () => {
-  const countTags = Math.round(Math.random() * MAX_COUNT_TAGS);
+  const countTags = util.getRandomInt(MIN_COUNT_TAGS, MAX_COUNT_TAGS);
   const copyTags = TAGS_LIST.slice();
   const tags = [];
 
   for (let i = 0; i < countTags; i++) {
-    tags.push(copyTags.splice(Math.floor(Math.random() * copyTags.length), 1));
+    tags.push(copyTags.splice(util.getRandomInt(0, copyTags.length - 1), 1));
   }
 
   return tags;
 };
 
-const getRandomTitle = () => TITLES_LIST[Math.floor(Math.random() * TITLES_LIST.length)];
-
-const getRandomColor = () => COLORS_LIST[Math.floor(Math.random() * COLORS_LIST.length)];
+const getRandomTitle = () => TITLES_LIST[util.getRandomInt(0, TITLES_LIST.length - 1)];
+const getRandomColor = () => TITLES_LIST[util.getRandomInt(0, COLORS_LIST.length - 1)];
+const getRandomDate = () => Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000;
+const getRandomPicture = () => URL_PICTURE + Math.random();
 
 const createRandomDataCard = () => {
   return {
     title: getRandomTitle(),
-    dueDate: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
+    dueDate: getRandomDate(),
     tags: new Set(getRandomTags()),
-    picture: `http://picsum.photos/100/100?r=${Math.random()}.`,
+    picture: getRandomPicture(),
     color: getRandomColor(),
     repeatingDays: WEEK_DAYS.reduce((res, day) => {
       res[day] = getRandomBool();
@@ -94,6 +100,20 @@ const renderCard = (dataCard) => {
         value="${it}" ${isChecked}/>
       <label class="card__repeat-day" for="repeat-${it}-5">${it}</label>`;
   });
+
+/*
+    const weekDaysString = Object.keys(this._repeatingDays).map((it) => {
+      return `
+        <input
+          class="visually-hidden card__repeat-day-input"
+          type="checkbox"
+          id="repeat-${it}-5"
+          name="repeat"
+          value="${it}" ${this._repeatingDays[it] ? `checked` : ``}/>
+        <label class="card__repeat-day" for="repeat-${it}-5">${it}</label>`;
+    }).join(``);
+
+ */
 
   dataCard.tags.forEach((it) => {
     tagsString += `
@@ -201,7 +221,7 @@ const renderCard = (dataCard) => {
   boardTasksBlock.insertAdjacentHTML(`afterbegin`, cardString);
 };
 
-const createCardsList = (number = Math.round(Math.random() * MAX_COUNT_CARD)) => {
+const createCardsList = (number = util.getRandomInt(0, MAX_COUNT_CARD)) => {
   const cardList = [];
 
   for (let i = 0; i < number; i++) {
@@ -217,4 +237,4 @@ const renderCardsList = (cardList) => {
   });
 };
 
-export {renderCardsList, createCardsList, START_COUNT_CARD};
+export {renderCardsList, createCardsList, START_COUNT_CARD, MAX_COUNT_CARD};
