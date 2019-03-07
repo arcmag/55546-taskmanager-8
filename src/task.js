@@ -44,6 +44,30 @@ class Task {
         </span>`.trim();
     }).join(``);
 
+    const weekDaysString = Object.keys(this._repeatingDays).map((it) => {
+      return `
+        <input
+          class="visually-hidden card__repeat-day-input"
+          type="checkbox"
+          id="repeat-${it}-5"
+          name="repeat"
+          value="${it}" ${!this._repeatingDays[it] ? `` : `checked`}/>
+        <label class="card__repeat-day" for="repeat-mo-5">${it}</label>`.trim();
+    }).join(``);
+
+    const colorsString = `black yellow blue green pink`.split(` `).map((it) => {
+      return `
+        <input
+          type="radio"
+          id="color-${it}-5"
+          class="card__color-input
+          card__color-input--${it}
+          visually-hidden"
+          name="color"
+          value="${it}" ${it !== `green` ? `` : `checked`}/>
+        <label for="color-${it}-5" class="card__color card__color--${it}">${it}</label>`.trim();
+    }).join(``);
+
     return `
     <article class="card card--blue ${this._isRepeated() ? `card--repeat` : ``}">
       <form class="card__form" method="get">
@@ -89,26 +113,7 @@ class Task {
 
                 <fieldset class="card__repeat-days" disabled>
                   <div class="card__repeat-days-inner">
-                    <input class="visually-hidden card__repeat-day-input" type="checkbox" id="repeat-mo-5" name="repeat" value="mo" />
-                    <label class="card__repeat-day" for="repeat-mo-5">mo</label>
-
-                    <input class="visually-hidden card__repeat-day-input" type="checkbox" id="repeat-tu-5" name="repeat" value="tu" checked />
-                    <label class="card__repeat-day" for="repeat-tu-5">tu</label>
-
-                    <input class="visually-hidden card__repeat-day-input" type="checkbox" id="repeat-we-5" name="repeat" value="we" />
-                    <label class="card__repeat-day" for="repeat-we-5" >w</label>
-
-                    <input class="visually-hidden card__repeat-day-input" type="checkbox" id="repeat-th-5" name="repeat" value="th" />
-                    <label class="card__repeat-day" for="repeat-th-5">th</label>
-
-                    <input class="visually-hidden card__repeat-day-input" type="checkbox" id="repeat-fr-5" name="repeat" value="fr" checked />
-                    <label class="card__repeat-day" for="repeat-fr-5" >fr</label>
-
-                    <input class="visually-hidden card__repeat-day-input" type="checkbox" name="repeat" value="sa" id="repeat-sa-5" />
-                    <label class="card__repeat-day" for="repeat-sa-5">sa</label>
-
-                    <input class="visually-hidden card__repeat-day-input" type="checkbox" id="repeat-su-5" name="repeat" value="su" checked />
-                    <label class="card__repeat-day" for="repeat-su-5" >su</label>
+                    ${weekDaysString}
                   </div>
                 </fieldset>
               </div>
@@ -131,20 +136,7 @@ class Task {
             <div class="card__colors-inner">
               <h3 class="card__colors-title">Color</h3>
               <div class="card__colors-wrap">
-                <input type="radio" id="color-black-5" class="card__color-input card__color-input--black visually-hidden" name="color" value="black" />
-                <label for="color-black-5" class="card__color card__color--black">black</label>
-
-                <input type="radio" id="color-yellow-5" class="card__color-input card__color-input--yellow visually-hidden" name="color" value="yellow" />
-                <label for="color-yellow-5" class="card__color card__color--yellow">yellow</label>
-
-                <input type="radio" id="color-blue-5" class="card__color-input card__color-input--blue visually-hidden" name="color" value="blue" />
-                <label for="color-blue-5" class="card__color card__color--blue">blue</label>
-
-                <input type="radio" id="color-green-5" class="card__color-input card__color-input--green visually-hidden" name="color" value="green" checked />
-                <label for="color-green-5" class="card__color card__color--green">green</label>
-
-                <input type="radio" id="color-pink-5" class="card__color-input card__color-input--pink visually-hidden" name="color" value="pink" />
-                <label for="color-pink-5" class="card__color card__color--pink">pink</label>
+                ${colorsString}
               </div>
             </div>
           </div>
@@ -158,20 +150,23 @@ class Task {
     </article>`.trim();
   }
 
+  cache() {
+    this._btnEdit = this._element.querySelector(`.card__btn--edit`);
+  }
+
   bind() {
-    this._element.querySelector(`.card__btn--edit`)
-        .addEventListener(`click`, this._onEditButtonClick.bind(this));
+    this._btnEdit.addEventListener(`click`, this._onEditButtonClick.bind(this));
   }
 
   render() {
     this._element = util.createElement(this.template);
+    this.cache();
     this.bind();
     return this._element;
   }
 
   unbind() {
-    this._element.querySelector(`.card__btn--edit`)
-        .removeEventListener(`click`, this._onEditButtonClick.bind(this));
+    this._btnEdit.removeEventListener(`click`, this._onEditButtonClick.bind(this));
   }
 
   unrender() {
