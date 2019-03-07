@@ -1,8 +1,9 @@
 import {util} from './util';
-import {renderCardsList, createCardsList, MAX_COUNT_CARD} from './card';
 
 const MAX_NUMBER_TASKS = 100;
 const MIN_NUMBER_TASKS = 0;
+
+const MAX_COUNT_CARD = 20;
 
 const mainFiltersBlock = document.querySelector(`.main__filter`);
 mainFiltersBlock.innerHTML = ``;
@@ -40,7 +41,11 @@ const renderFilter = (filterType) => {
 
   wrapperFilter.addEventListener(`click`, () => {
     boardTasksBlock.innerHTML = ``;
-    renderCardsList(createCardsList(util.getRandomInt(0, MAX_COUNT_CARD)));
+    util.renderTasksList(
+        boardTasksBlock,
+        util.createTasksList(util.getRandomInt(0, MAX_COUNT_CARD))
+    );
+    // renderCardsList(createCardsList(util.getRandomInt(0, MAX_COUNT_CARD)));
   });
 
   mainFiltersBlock.appendChild(wrapperFilter);
