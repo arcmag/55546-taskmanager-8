@@ -175,7 +175,7 @@ class TaskEdit {
   }
 
   bind() {
-    this._eventSubmit = this._onSubmitButtonClick.bind(this)
+    this._eventSubmit = this._onSubmitButtonClick.bind(this);
     this._form.addEventListener(`submit`, this._eventSubmit.bind(this));
   }
 
