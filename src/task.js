@@ -1,5 +1,13 @@
 import {util} from './util';
 
+const COLORS_LIST = [
+  `black`,
+  `yellow`,
+  `blue`,
+  `green`,
+  `pink`
+];
+
 class Task {
   constructor(data) {
     this._title = data.title;
@@ -7,6 +15,7 @@ class Task {
     this._tags = data.tags;
     this._picture = data.picture;
     this._repeatingDays = data.repeatingDays;
+    this._color = data.color;
 
     this._element = null;
     this._state = {
@@ -55,7 +64,7 @@ class Task {
         <label class="card__repeat-day" for="repeat-mo-5">${it}</label>`.trim();
     }).join(``);
 
-    const colorsString = `black yellow blue green pink`.split(` `).map((it) => {
+    const colorsString = COLORS_LIST.map((it) => {
       return `
         <input
           type="radio"
@@ -64,7 +73,7 @@ class Task {
           card__color-input--${it}
           visually-hidden"
           name="color"
-          value="${it}" ${it !== `green` ? `` : `checked`}/>
+          value="${it}" ${it !== this._color ? `` : `checked`}/>
         <label for="color-${it}-5" class="card__color card__color--${it}">${it}</label>`.trim();
     }).join(``);
 
@@ -155,7 +164,8 @@ class Task {
   }
 
   bind() {
-    this._btnEdit.addEventListener(`click`, this._onEditButtonClick.bind(this));
+    this._eventEdit = this._onEditButtonClick.bind(this);
+    this._btnEdit.addEventListener(`click`, this._eventEdit);
   }
 
   render() {
@@ -166,7 +176,8 @@ class Task {
   }
 
   unbind() {
-    this._btnEdit.removeEventListener(`click`, this._onEditButtonClick.bind(this));
+    this._btnEdit.removeEventListener(`click`, this._eventEdit);
+    this._eventEdit = null;
   }
 
   unrender() {

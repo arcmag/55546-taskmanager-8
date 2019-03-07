@@ -1,5 +1,13 @@
 import {util} from './util';
 
+const COLORS_LIST = [
+  `black`,
+  `yellow`,
+  `blue`,
+  `green`,
+  `pink`
+];
+
 class TaskEdit {
   constructor(data) {
     this._title = data.title;
@@ -7,6 +15,7 @@ class TaskEdit {
     this._tags = data.tags;
     this._picture = data.picture;
     this._repeatingDays = data.repeatingDays;
+    this._color = data.color;
 
     this._element = null;
     this._onSubmit = null;
@@ -53,7 +62,7 @@ class TaskEdit {
         <label class="card__repeat-day" for="repeat-mo-5">${it}</label>`.trim();
     }).join(``);
 
-    const colorsString = `black yellow blue green pink`.split(` `).map((it) => {
+    const colorsString = COLORS_LIST.map((it) => {
       return `
         <input
           type="radio"
@@ -62,10 +71,9 @@ class TaskEdit {
           card__color-input--${it}
           visually-hidden"
           name="color"
-          value="${it}" ${it !== `green` ? `` : `checked`}/>
+          value="${it}" ${it !== this._color ? `` : `checked`}/>
         <label for="color-${it}-5" class="card__color card__color--${it}">${it}</label>`.trim();
     }).join(``);
-
 
     return `
     <article class="card card--edit card--blue ${this._isRepeated() ? `card--repeat` : ``}">
@@ -162,15 +170,18 @@ class TaskEdit {
 
   unrender() {
     this.unbind();
+    this._form = null;
     this._element = null;
   }
 
   bind() {
-    this._form.addEventListener(`submit`, this._onSubmitButtonClick.bind(this));
+    this._eventSubmit = this._onSubmitButtonClick.bind(this)
+    this._form.addEventListener(`submit`, this._eventSubmit.bind(this));
   }
 
   unbind() {
-    this._form.removeEventListener(`submit`, this._onSubmitButtonClick.bind(this));
+    this._form.removeEventListener(`submit`, this._eventSubmit);
+    this._eventSubmit = null;
     // Удаление обработчиков
   }
 

@@ -52,7 +52,7 @@ const getRandomTags = () => {
 };
 
 const getRandomTitle = () => TITLES_LIST[util.getRandomInt(0, TITLES_LIST.length - 1)];
-const getRandomColor = () => TITLES_LIST[util.getRandomInt(0, COLORS_LIST.length - 1)];
+const getRandomColor = () => COLORS_LIST[util.getRandomInt(0, COLORS_LIST.length - 1)];
 const getRandomDate = () => Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000;
 const getRandomPicture = () => URL_PICTURE + Math.random();
 
