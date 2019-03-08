@@ -1,5 +1,7 @@
 import {getRandomInt} from './util';
 
+let countCard = 0;
+
 const TAGS_LIST = [
   `homework`,
   `theory`,
@@ -58,6 +60,7 @@ const getRandomPicture = () => URL_PICTURE + Math.random();
 
 const createRandomTask = () => {
   return {
+    id: countCard++,
     title: getRandomTitle(),
     dueDate: getRandomDate(),
     tags: new Set(getRandomTags()),

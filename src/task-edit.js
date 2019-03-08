@@ -8,10 +8,28 @@ const COLORS_LIST = [
   `pink`
 ];
 
+const MONTHS_LIST = [
+  `January`,
+  `February`,
+  `March`,
+  `April`,
+  `May`,
+  `June`,
+  `July`,
+  `August`,
+  `September`,
+  `October`,
+  `November`,
+  `December`
+];
+
 class TaskEdit {
   constructor(data) {
+    this._id = data.id;
+
     this._title = data.title;
     this._dueDate = data.dueDate;
+    this._date = new Date(data.dueDate);
     this._tags = data.tags;
     this._picture = data.picture;
     this._repeatingDays = data.repeatingDays;
@@ -42,6 +60,7 @@ class TaskEdit {
   }
 
   get template() {
+
     const tagsString = [...this._tags].map((it) => {
       return `
         <span class="card__hashtag-inner">
@@ -56,23 +75,23 @@ class TaskEdit {
         <input
           class="visually-hidden card__repeat-day-input"
           type="checkbox"
-          id="repeat-${it}-5"
+          id="repeat-${it}-${this._id}"
           name="repeat"
           value="${it}" ${!this._repeatingDays[it] ? `` : `checked`}/>
-        <label class="card__repeat-day" for="repeat-mo-5">${it}</label>`.trim();
+        <label class="card__repeat-day" for="repeat-mo-${this._id}">${it}</label>`.trim();
     }).join(``);
 
     const colorsString = COLORS_LIST.map((it) => {
       return `
         <input
           type="radio"
-          id="color-${it}-5"
+          id="color-${it}-${this._id}"
           class="card__color-input
           card__color-input--${it}
           visually-hidden"
           name="color"
           value="${it}" ${it !== this._color ? `` : `checked`}/>
-        <label for="color-${it}-5" class="card__color card__color--${it}">${it}</label>`.trim();
+        <label for="color-${it}-${this._id}" class="card__color card__color--${it}">${it}</label>`.trim();
     }).join(``);
 
     return `
@@ -101,16 +120,16 @@ class TaskEdit {
             <div class="card__details">
               <div class="card__dates">
                 <button class="card__date-deadline-toggle" type="button">
-                  date: <span class="card__date-status">${this._dueDate}</span>
+                  date: <span class="card__date-status">${this._isRepeated() ? `yes` : `no`}</span>
                 </button>
 
                 <fieldset class="card__date-deadline" disabled>
                   <label class="card__input-deadline-wrap">
-                    <input class="card__date" type="text" placeholder="23 September" name="date" />
+                    <input class="card__date" type="text" placeholder="${this._date.getDate() - 1} ${MONTHS_LIST[this._date.getMonth()]}" name="date" />
                   </label>
 
                   <label class="card__input-deadline-wrap">
-                    <input class="card__time" type="text" placeholder="11:15 PM" name="time" />
+                    <input class="card__time" type="text" placeholder="${this._date.getHours()}:${this._date.getMinutes()} PM" name="time" />
                   </label>
                 </fieldset>
 
