@@ -11,19 +11,29 @@ const createElement = (template) => {
 const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const getRandomFloat = (min, max) => Math.random() * (max - min + 1) + min;
 
-const createTask = (data = createRandomTask()) => {
+const createDataTasksList = (numberTask) => {
+  const dataTasksList = [];
+
+  for (let i = 0; i < numberTask; i++) {
+    dataTasksList.push(createRandomTask());
+  }
+
+  return dataTasksList;
+};
+
+const createTask = (data) => {
   return {
     taskComponent: new Task(data),
     editTaskComponent: new TaskEdit(data)
   };
 };
 
-const createTasksList = (numberTask) => {
+const createTasksList = (dataTasksList) => {
   const tasksList = [];
 
-  for (let i = 0; i < numberTask; i++) {
-    tasksList.push(createTask());
-  }
+  dataTasksList.forEach((it) => {
+    tasksList.push(createTask(it));
+  });
 
   return tasksList;
 };
@@ -50,14 +60,13 @@ const renderTasksList = (container, tasksList) => {
   });
 };
 
-const util = {
+export {
   createElement,
   getRandomInt,
   getRandomFloat,
   createTask,
   createTasksList,
   renderTask,
-  renderTasksList
+  renderTasksList,
+  createDataTasksList
 };
-
-export {util};

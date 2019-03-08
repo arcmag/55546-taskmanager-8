@@ -1,4 +1,4 @@
-import {util} from './util';
+import {getRandomInt} from './util';
 
 const TAGS_LIST = [
   `homework`,
@@ -40,19 +40,19 @@ const MAX_COUNT_TAGS = 3;
 const getRandomBool = () => !!(Math.random() < 0.5);
 
 const getRandomTags = () => {
-  const countTags = util.getRandomInt(MIN_COUNT_TAGS, MAX_COUNT_TAGS);
+  const countTags = getRandomInt(MIN_COUNT_TAGS, MAX_COUNT_TAGS);
   const copyTags = TAGS_LIST.slice();
   const tags = [];
 
   for (let i = 0; i < countTags; i++) {
-    tags.push(copyTags.splice(util.getRandomInt(0, copyTags.length - 1), 1));
+    tags.push(copyTags.splice(getRandomInt(0, copyTags.length - 1), 1));
   }
 
   return tags;
 };
 
-const getRandomTitle = () => TITLES_LIST[util.getRandomInt(0, TITLES_LIST.length - 1)];
-const getRandomColor = () => COLORS_LIST[util.getRandomInt(0, COLORS_LIST.length - 1)];
+const getRandomTitle = () => TITLES_LIST[getRandomInt(0, TITLES_LIST.length - 1)];
+const getRandomColor = () => COLORS_LIST[getRandomInt(0, COLORS_LIST.length - 1)];
 const getRandomDate = () => Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000;
 const getRandomPicture = () => URL_PICTURE + Math.random();
 

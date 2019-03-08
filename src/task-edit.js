@@ -1,4 +1,4 @@
-import {util} from './util';
+import {createElement} from './util';
 
 const COLORS_LIST = [
   `black`,
@@ -101,7 +101,7 @@ class TaskEdit {
             <div class="card__details">
               <div class="card__dates">
                 <button class="card__date-deadline-toggle" type="button">
-                  date: <span class="card__date-status">no</span>
+                  date: <span class="card__date-status">${this._dueDate}</span>
                 </button>
 
                 <fieldset class="card__date-deadline" disabled>
@@ -115,7 +115,7 @@ class TaskEdit {
                 </fieldset>
 
                 <button class="card__repeat-toggle" type="button">
-                  repeat: <span class="card__repeat-status">no</span>
+                  repeat: <span class="card__repeat-status">${this._isRepeated() ? `yes` : `no`}</span>
                 </button>
 
                 <fieldset class="card__repeat-days" disabled>
@@ -162,7 +162,7 @@ class TaskEdit {
   }
 
   render() {
-    this._element = util.createElement(this.template);
+    this._element = createElement(this.template);
     this.cache();
     this.bind();
     return this._element;

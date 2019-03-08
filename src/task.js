@@ -1,4 +1,4 @@
-import {util} from './util';
+import {createElement} from './util';
 
 const COLORS_LIST = [
   `black`,
@@ -169,7 +169,7 @@ class Task {
   }
 
   render() {
-    this._element = util.createElement(this.template);
+    this._element = createElement(this.template);
     this.cache();
     this.bind();
     return this._element;

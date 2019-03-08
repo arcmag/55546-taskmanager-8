@@ -1,4 +1,5 @@
-import {util} from './util';
+import {createRandomTask} from './data';
+import {renderTask, createTask} from './util';
 import {renderFiltersList} from './filter';
 
 renderFiltersList();
@@ -6,4 +7,4 @@ renderFiltersList();
 const tasksContainer = document.querySelector(`.board__tasks`);
 
 tasksContainer.innerHTML = ``;
-util.renderTask(tasksContainer, util.createTask());
+renderTask(tasksContainer, createTask(createRandomTask()));

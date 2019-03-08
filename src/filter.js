@@ -1,4 +1,4 @@
-import {util} from './util';
+import {getRandomInt, createDataTasksList, createTasksList, renderTasksList} from './util';
 
 const MAX_NUMBER_TASKS = 100;
 const MIN_NUMBER_TASKS = 0;
@@ -33,7 +33,7 @@ const createFilterTemplate = (type, numberTask) => `
     >
   `;
 
-const getFilterTemplate = (filterType) => createFilterTemplate(filterType, util.getRandomInt(MIN_NUMBER_TASKS, MAX_NUMBER_TASKS));
+const getFilterTemplate = (filterType) => createFilterTemplate(filterType, getRandomInt(MIN_NUMBER_TASKS, MAX_NUMBER_TASKS));
 
 const renderFilter = (filterType) => {
   const wrapperFilter = document.createElement(`div`);
@@ -41,11 +41,11 @@ const renderFilter = (filterType) => {
 
   wrapperFilter.addEventListener(`click`, () => {
     boardTasksBlock.innerHTML = ``;
-    util.renderTasksList(
-        boardTasksBlock,
-        util.createTasksList(util.getRandomInt(0, MAX_COUNT_CARD))
-    );
-    // renderCardsList(createCardsList(util.getRandomInt(0, MAX_COUNT_CARD)));
+
+    const dataTasksList = createDataTasksList(getRandomInt(0, MAX_COUNT_CARD));
+    const tasksList = createTasksList(dataTasksList);
+
+    renderTasksList(boardTasksBlock, tasksList);
   });
 
   mainFiltersBlock.appendChild(wrapperFilter);
