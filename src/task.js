@@ -8,21 +8,6 @@ const COLORS_LIST = [
   `pink`
 ];
 
-const MONTHS_LIST = [
-  `January`,
-  `February`,
-  `March`,
-  `April`,
-  `May`,
-  `June`,
-  `July`,
-  `August`,
-  `September`,
-  `October`,
-  `November`,
-  `December`
-];
-
 class Task {
   constructor(data) {
     this._id = data.id;
@@ -62,6 +47,11 @@ class Task {
   }
 
   get template() {
+    const month = this._date.toLocaleString(`en-US`, {month: `long`});
+    const day = this._date.toLocaleString(`en-US`, {day: `2-digit`});
+    const hours = this._date.toLocaleString(`en-US`, {hour12: false, hour: `numeric`});
+    const minutes = this._date.toLocaleString(`en-US`, {minute: `2-digit`});
+
     const tagsString = [...this._tags].map((it) => {
       return `
         <span class="card__hashtag-inner">
@@ -124,13 +114,13 @@ class Task {
                   date: <span class="card__date-status">${this._isRepeated() ? `yes` : `no`}</span>
                 </button>
 
-                <fieldset class="card__date-deadline" disabled>
+                <fieldset class="card__date-deadline" ${!this._isRepeated() ? `disabled` : ``}>
                   <label class="card__input-deadline-wrap">
-                    <input class="card__date" type="text" placeholder="${this._date.getDate() - 1} ${MONTHS_LIST[this._date.getMonth()]}" name="date" />
+                    <input class="card__date" type="text" value="${day} ${month}" name="date" />
                   </label>
 
                   <label class="card__input-deadline-wrap">
-                    <input class="card__time" type="text" placeholder="${this._date.getHours()}:${this._date.getMinutes()} PM" name="time" />
+                    <input class="card__time" type="text" value="${hours}:${minutes} PM" name="time" />
                   </label>
                 </fieldset>
 
@@ -138,7 +128,7 @@ class Task {
                   repeat: <span class="card__repeat-status">${this._isRepeated() ? `yes` : `no`}</span>
                 </button>
 
-                <fieldset class="card__repeat-days" disabled>
+                <fieldset class="card__repeat-days" ${!this._isRepeated() ? `disabled` : ``}>
                   <div class="card__repeat-days-inner">
                     ${weekDaysString}
                   </div>
