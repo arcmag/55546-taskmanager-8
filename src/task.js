@@ -1,4 +1,5 @@
 import {createElement} from './util';
+import {Component} from './component';
 
 const COLORS_LIST = [
   `black`,
@@ -8,8 +9,10 @@ const COLORS_LIST = [
   `pink`
 ];
 
-class Task {
+class Task extends Component {
   constructor(data) {
+    super();
+
     this._id = data.id;
 
     this._title = data.title;
@@ -20,12 +23,8 @@ class Task {
     this._repeatingDays = data.repeatingDays;
     this._color = data.color;
 
-    this._element = null;
-    this._state = {
-      // Состояние компонента
-    };
-
     this._onEdit = null;
+    this._onEditButtonClick = this._onEditButtonClick.bind(this);
   }
 
   _isRepeated() {
@@ -36,10 +35,6 @@ class Task {
     if (typeof this._onEdit === `function`) {
       this._onEdit();
     }
-  }
-
-  get element() {
-    return this._element;
   }
 
   set onEdit(fn) {
@@ -171,28 +166,17 @@ class Task {
     this._btnEdit = this._element.querySelector(`.card__btn--edit`);
   }
 
-  bind() {
-    this._eventEdit = this._onEditButtonClick.bind(this);
-    this._btnEdit.addEventListener(`click`, this._eventEdit);
+  uncache() {
+    this._btnEdit = null;
   }
 
-  render() {
-    this._element = createElement(this.template);
-    this.cache();
-    this.bind();
-    return this._element;
+  bind() {
+    this._btnEdit.addEventListener(`click`, this._onEditButtonClick);
   }
 
   unbind() {
-    this._btnEdit.removeEventListener(`click`, this._eventEdit);
-    this._eventEdit = null;
+    this._btnEdit.removeEventListener(`click`, this._onEditButtonClick);
   }
-
-  unrender() {
-    this.unbind();
-    this._element = null;
-  }
-
 }
 
 export {Task};

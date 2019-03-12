@@ -1,4 +1,5 @@
 import {createElement} from './util';
+import {Component} from './component';
 
 const COLORS_LIST = [
   `black`,
@@ -8,8 +9,10 @@ const COLORS_LIST = [
   `pink`
 ];
 
-class TaskEdit {
+class TaskEdit extends Component {
   constructor(data) {
+    super();
+
     this._id = data.id;
 
     this._title = data.title;
@@ -20,8 +23,8 @@ class TaskEdit {
     this._repeatingDays = data.repeatingDays;
     this._color = data.color;
 
-    this._element = null;
     this._onSubmit = null;
+    this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
   }
 
   _onSubmitButtonClick(evt) {
@@ -38,10 +41,6 @@ class TaskEdit {
 
   set onSubmit(fn) {
     this._onSubmit = fn;
-  }
-
-  get element() {
-    return this._element;
   }
 
   get template() {
@@ -169,30 +168,17 @@ class TaskEdit {
     this._form = this._element.querySelector(`.card__form`);
   }
 
-  render() {
-    this._element = createElement(this.template);
-    this.cache();
-    this.bind();
-    return this._element;
-  }
-
-  unrender() {
-    this.unbind();
+  uncache() {
     this._form = null;
-    this._element = null;
   }
 
   bind() {
-    this._eventSubmit = this._onSubmitButtonClick.bind(this);
-    this._form.addEventListener(`submit`, this._eventSubmit);
+    this._form.addEventListener(`submit`, this._onSubmitButtonClick);
   }
 
   unbind() {
-    this._form.removeEventListener(`submit`, this._eventSubmit);
-    this._eventSubmit = null;
-    // Удаление обработчиков
+    this._form.removeEventListener(`submit`, this._onSubmitButtonClick);
   }
-
 }
 
 export {TaskEdit};
