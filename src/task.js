@@ -1,4 +1,3 @@
-import {createElement} from './util';
 import {Component} from './component';
 
 const COLORS_LIST = [

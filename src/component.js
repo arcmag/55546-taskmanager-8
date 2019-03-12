@@ -1,7 +1,7 @@
 import {createElement} from './util';
 
 class Component {
- constructor() {
+  constructor() {
     if (new.target === Component) {
       throw new Error(`Can't instantiate BaseComponent, only concrete one.`);
     }
