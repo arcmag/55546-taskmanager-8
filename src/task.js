@@ -17,7 +17,6 @@ export default class Task extends Component {
 
     this._title = data.title;
     this._dueDate = data.dueDate;
-    this._date = new Date(data.dueDate);
     this._tags = data.tags;
     this._picture = data.picture;
     this._repeatingDays = data.repeatingDays;
@@ -112,7 +111,7 @@ export default class Task extends Component {
                   </label>
 
                   <label class="card__input-deadline-wrap">
-                    <input class="card__time" type="text" value="${date.format(`HH:mm`)} PM" name="time" />
+                    <input class="card__time" type="text" value="${date.format(`HH:mm A`)}" name="time" />
                   </label>
                 </fieldset>
 

@@ -180,7 +180,7 @@ export default class TaskEdit extends Component {
                   </label>
 
                   <label class="card__input-deadline-wrap">
-                    <input class="card__time" type="text" value="${date.format(`HH:mm`)} PM" name="time" />
+                    <input class="card__time" type="text" value="${date.format(`HH:mm A`)}" name="time" />
                   </label>
                 </fieldset>
 
@@ -264,7 +264,6 @@ export default class TaskEdit extends Component {
             dateFormat: `h:i K`
           }
       );
-
     }
   }
 
@@ -288,7 +287,13 @@ export default class TaskEdit extends Component {
       text: (value) => (target.title = value),
       color: (value) => (target.color = value),
       repeat: (value) => (target.repeatingDays[value] = true),
-      date: (value) => target.dueDate[value]
+      date: (value) => (target.dueDate = moment(value, `DD MMMM`).toDate().getTime()),
+      time: (value) => {
+        const time = moment(value, `HH:mm A`);
+
+        target.dueDate = moment(target.dueDate)
+          .set({hour: time.hour(), minute: time.minute()}).toDate().getTime();
+      }
     };
   }
 }
