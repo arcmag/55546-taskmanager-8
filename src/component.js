@@ -1,6 +1,6 @@
 import {createElement} from './util';
 
-class Component {
+export default class Component {
   constructor() {
     if (new.target === Component) {
       throw new Error(`Can't instantiate BaseComponent, only concrete one.`);
@@ -37,6 +37,6 @@ class Component {
   bind() {}
 
   unbind() {}
-}
 
-export {Component};
+  update() {}
+}

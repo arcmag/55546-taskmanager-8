@@ -1,14 +1,15 @@
-import {Component} from './component';
+import Component from './component';
+import moment from 'moment';
 
-const COLORS_LIST = [
-  `black`,
-  `yellow`,
-  `blue`,
-  `green`,
-  `pink`
-];
+const Color = {
+  blue: `card--blue`,
+  black: `card--black`,
+  yellow: `card--yellow`,
+  green: `card--green`,
+  pink: `card--pink`,
+};
 
-class Task extends Component {
+export default class Task extends Component {
   constructor(data) {
     super();
 
@@ -41,10 +42,7 @@ class Task extends Component {
   }
 
   get template() {
-    const month = this._date.toLocaleString(`en-US`, {month: `long`});
-    const day = this._date.toLocaleString(`en-US`, {day: `2-digit`});
-    const hours = this._date.toLocaleString(`en-US`, {hour12: false, hour: `numeric`});
-    const minutes = this._date.toLocaleString(`en-US`, {minute: `2-digit`});
+    const date = moment(this._dueDate);
 
     const tagsString = [...this._tags].map((it) => {
       return `
@@ -66,7 +64,7 @@ class Task extends Component {
         <label class="card__repeat-day" for="repeat-mo-${this._id}">${it}</label>`.trim();
     }).join(``);
 
-    const colorsString = COLORS_LIST.map((it) => {
+    const colorsString = Object.keys(Color).map((it) => {
       return `
         <input
           type="radio"
@@ -80,7 +78,7 @@ class Task extends Component {
     }).join(``);
 
     return `
-    <article class="card card--blue ${this._isRepeated() ? `card--repeat` : ``}">
+    <article class="card ${Color[this._color]} ${this._isRepeated() ? `card--repeat` : ``}">
       <form class="card__form" method="get">
         <div class="card__inner">
           <div class="card__control">
@@ -110,11 +108,11 @@ class Task extends Component {
 
                 <fieldset class="card__date-deadline" ${!this._isRepeated() ? `disabled` : ``}>
                   <label class="card__input-deadline-wrap">
-                    <input class="card__date" type="text" value="${day} ${month}" name="date" />
+                    <input class="card__date" type="text" value="${date.format(`DD MMMM`)}" name="date" />
                   </label>
 
                   <label class="card__input-deadline-wrap">
-                    <input class="card__time" type="text" value="${hours}:${minutes} PM" name="time" />
+                    <input class="card__time" type="text" value="${date.format(`HH:mm`)} PM" name="time" />
                   </label>
                 </fieldset>
 
@@ -176,6 +174,11 @@ class Task extends Component {
   unbind() {
     this._btnEdit.removeEventListener(`click`, this._onEditButtonClick);
   }
-}
 
-export {Task};
+  update(data) {
+    this._title = data.title;
+    this._tags = data.tags;
+    this._color = data.color;
+    this._repeatingDays = data.repeatingDays;
+  }
+}

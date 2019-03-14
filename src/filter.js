@@ -45,7 +45,7 @@ const renderFilter = (filterType) => {
     const dataTasksList = createDataTasksList(getRandomInt(0, MAX_COUNT_CARD));
     const tasksList = createTasksList(dataTasksList);
 
-    renderTasksList(boardTasksBlock, tasksList);
+    renderTasksList(tasksList);
   });
 
   mainFiltersBlock.appendChild(wrapperFilter);

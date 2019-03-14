@@ -1,6 +1,8 @@
 import {createRandomTask} from './data';
-import {Task} from './task';
-import {TaskEdit} from './task-edit';
+import Task from './task';
+import TaskEdit from './task-edit';
+
+const tasksContainer = document.querySelector(`.board__tasks`);
 
 const createElement = (template) => {
   const newElement = document.createElement(`div`);
@@ -22,41 +24,37 @@ const createDataTasksList = (numberTask) => {
 };
 
 const createTask = (data) => {
+  const task = new Task(data);
+  const taskEdit = new TaskEdit(data);
+
+  task.onEdit = () => {
+    taskEdit.render();
+    tasksContainer.replaceChild(taskEdit.element, task.element);
+    task.unrender();
+  };
+
+  taskEdit.onSubmit = (newData) => {
+    task.update(newData);
+    task.render();
+    tasksContainer.replaceChild(task.element, taskEdit.element);
+    taskEdit.unrender();
+  };
+
   return {
-    taskComponent: new Task(data),
-    editTaskComponent: new TaskEdit(data)
+    task,
+    taskEdit
   };
 };
 
-const createTasksList = (dataTasksList) => {
-  const tasksList = [];
+const createTasksList = (dataTasksList) => dataTasksList.map((it) => createTask(it));
 
-  dataTasksList.forEach((it) => {
-    tasksList.push(createTask(it));
-  });
-
-  return tasksList;
+const renderTask = (dataTask) => {
+  tasksContainer.appendChild(dataTask.task.render());
 };
 
-const renderTask = (container, task) => {
-  task.taskComponent.onEdit = () => {
-    task.editTaskComponent.render();
-    container.replaceChild(task.editTaskComponent.element, task.taskComponent.element);
-    task.taskComponent.unrender();
-  };
-
-  task.editTaskComponent.onSubmit = () => {
-    task.taskComponent.render();
-    container.replaceChild(task.taskComponent.element, task.editTaskComponent.element);
-    task.editTaskComponent.unrender();
-  };
-
-  container.appendChild(task.taskComponent.render());
-};
-
-const renderTasksList = (container, tasksList) => {
+const renderTasksList = (tasksList) => {
   tasksList.forEach((it) => {
-    renderTask(container, it);
+    renderTask(it);
   });
 };
 
