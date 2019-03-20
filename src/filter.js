@@ -1,60 +1,59 @@
-import {getRandomInt, createDataTasksList, createTasksList, renderTasksList} from './util';
+import Component from './component';
 
-const MAX_NUMBER_TASKS = 100;
-const MIN_NUMBER_TASKS = 0;
+export default class Filter extends Component {
+  constructor(type, count) {
+    super();
+    this._type = type;
+    this._countTask = count;
 
-const MAX_COUNT_CARD = 20;
+    this._onFilterLabelClick = this._onFilterLabelClick.bind(this);
 
-const mainFiltersBlock = document.querySelector(`.main__filter`);
-mainFiltersBlock.innerHTML = ``;
+    this._onFilter = null;
+  }
 
-const boardTasksBlock = document.querySelector(`.board__tasks`);
+  set onFilter(fn) {
+    this._onFilter = fn;
+  }
 
-const FILTERS_TYPES = [
-  `add`,
-  `overdue`,
-  `today`,
-  `favorites`,
-  `repeating`,
-  `tags`,
-  `archive`
-];
+  _onFilterLabelClick() {
+    if (typeof this._onFilter === `function`) {
+      this._onFilter();
+    }
+  }
 
-const createFilterTemplate = (type, numberTask) => `
-    <input
-      type="radio"
-      id="filter__${type}"
-      class="filter__input visually-hidden"
-      name="filter"
-      checked
-    />
-    <label for="filter__${type}" class="filter__label">
-      ${type.toUpperCase()} <span class="filter__${type}-count">${numberTask}</span></label
-    >
-  `;
+  get template() {
+    return `
+      <div>
+        <input
+          type="radio"
+          id="filter__${this._type}"
+          class="filter__input visually-hidden"
+          name="filter"
+          checked
+        />
+        <label for="filter__${this._type}" class="filter__label">
+          ${this._type.toUpperCase()}
+          <span class="filter__${this._type}-count">${this._countTask}</span></label>
+      </div>`;
+  }
 
-const getFilterTemplate = (filterType) => createFilterTemplate(filterType, getRandomInt(MIN_NUMBER_TASKS, MAX_NUMBER_TASKS));
+  cache() {
+    this._label = this.element.querySelector(`.filter__label`);
+  }
 
-const renderFilter = (filterType) => {
-  const wrapperFilter = document.createElement(`div`);
-  wrapperFilter.innerHTML = getFilterTemplate(filterType);
+  uncache() {
+    this._label = null;
+  }
 
-  wrapperFilter.addEventListener(`click`, () => {
-    boardTasksBlock.innerHTML = ``;
+  bind() {
+    this._label.addEventListener(`click`, this._onFilterLabelClick);
+  }
 
-    const dataTasksList = createDataTasksList(getRandomInt(0, MAX_COUNT_CARD));
-    const tasksList = createTasksList(dataTasksList);
+  unbind() {
+    this._label.removeEventListener(`click`, this._onFilterLabelClick);
+  }
 
-    renderTasksList(tasksList);
-  });
-
-  mainFiltersBlock.appendChild(wrapperFilter);
-};
-
-const renderFiltersList = () => {
-  FILTERS_TYPES.forEach((it) => {
-    renderFilter(it);
-  });
-};
-
-export {renderFiltersList};
+  update(count) {
+    this._countTask = count;
+  }
+}

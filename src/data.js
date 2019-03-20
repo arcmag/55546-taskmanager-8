@@ -75,4 +75,4 @@ const createRandomTask = () => {
   };
 };
 
-export {createRandomTask};
+export {createRandomTask, COLORS_LIST, TAGS_LIST};

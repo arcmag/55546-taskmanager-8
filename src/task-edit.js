@@ -24,8 +24,13 @@ export default class TaskEdit extends Component {
     this._repeatingDays = data.repeatingDays;
     this._color = data.color;
 
+    this._isFavorite = data.isFavorite;
+    this._isDone = data.isDone;
+
     this._onSubmit = null;
+    this._onDelete = null;
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
+    this._onDeleteButtonClick = this._onDeleteButtonClick.bind(this);
 
     this._state.isDate = false;
     this._state.isRepeated = false;
@@ -79,6 +84,12 @@ export default class TaskEdit extends Component {
     this._state.isDate = false;
   }
 
+  _onDeleteButtonClick() {
+    if (typeof this._onDelete === `function`) {
+      this._onDelete();
+    }
+  }
+
   _onChangeDate() {
     this._state.isDate = !this._state.isDate;
     this.unbind();
@@ -107,6 +118,10 @@ export default class TaskEdit extends Component {
 
   set onSubmit(fn) {
     this._onSubmit = fn;
+  }
+
+  set onDelete(fn) {
+    this._onDelete = fn;
   }
 
   get template() {
@@ -231,18 +246,21 @@ export default class TaskEdit extends Component {
     this._form = this._element.querySelector(`.card__form`);
     this._deadlineToggle = this._element.querySelector(`.card__date-deadline-toggle`);
     this._repeatToggle = this._element.querySelector(`.card__repeat-toggle`);
+    this._btnDelete = this._element.querySelector(`.card__delete`);
   }
 
   uncache() {
     this._form = null;
     this._deadlineToggle = null;
     this._repeatToggle = null;
+    this._btnDelete = null;
   }
 
   bind() {
     this._form.addEventListener(`submit`, this._onSubmitButtonClick);
     this._deadlineToggle.addEventListener(`click`, this._onChangeDate);
     this._repeatToggle.addEventListener(`click`, this._onChangeRepeated);
+    this._btnDelete.addEventListener(`click`, this._onDeleteButtonClick);
 
     if (this._state.isDate) {
       flatpickr(
@@ -271,6 +289,7 @@ export default class TaskEdit extends Component {
     this._form.removeEventListener(`submit`, this._onSubmitButtonClick);
     this._deadlineToggle.removeEventListener(`click`, this._onChangeDate);
     this._repeatToggle.removeEventListener(`click`, this._onChangeRepeated);
+    this._btnDelete.removeEventListener(`click`, this._onDeleteButtonClick);
   }
 
   update(data) {
