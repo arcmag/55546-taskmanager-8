@@ -149,15 +149,20 @@ const openStatisticContainer = () => {
 const getDataTasksColors = () => {
   const labels = [];
   const colorsCount = {};
+  const dateFirst = selectDateStatsistics.selectedDates[0];
+  const dateLast = selectDateStatsistics.selectedDates[1] || Date.now();
 
   COLORS_LIST.forEach((it) => {
     labels.push(`#` + it);
     colorsCount[it] = 0;
   });
 
-  tasksList.forEach((it) => {
-    colorsCount[it._color]++;
-  });
+  tasksList.
+    filter((it) =>
+      it._dueDate >= dateFirst && it._dueDate <= dateLast).
+    forEach((it) => {
+      colorsCount[it._color]++;
+    });
 
   return {
     labels,
@@ -171,17 +176,22 @@ const getDataTasksColors = () => {
 const getDataTasksTags = () => {
   const labels = [];
   const tagsCount = {};
+  const dateFirst = selectDateStatsistics.selectedDates[0];
+  const dateLast = selectDateStatsistics.selectedDates[1] || Date.now();
 
   TAGS_LIST.forEach((it) => {
     labels.push(`#` + it);
     tagsCount[it] = 0;
   });
 
-  tasksList.forEach((it) => {
-    it._tags.forEach((tag) => {
-      tagsCount[tag]++;
+  tasksList.
+    filter((it) =>
+      it._dueDate >= dateFirst && it._dueDate <= dateLast).
+    forEach((it) => {
+      it._tags.forEach((tag) => {
+        tagsCount[tag]++;
+      });
     });
-  });
 
   return {
     labels,
@@ -189,116 +199,19 @@ const getDataTasksTags = () => {
   };
 };
 
-const createNewChart = (canvas, data) => new Chart(canvas, data);
-
 const updateCharts = () => {
   const dataChartTasksColor = getDataTasksColors();
   const dataChartTasksTags = getDataTasksTags();
 
-  createNewChart(tagsCtx, {
-    plugins: [ChartDataLabels],
-    type: `pie`,
-    data: {
-      labels: dataChartTasksTags.labels,
-      datasets: [{
-        data: dataChartTasksTags.data,
-        backgroundColor: [`#ff3cb9`, `#ffe125`, `#0c5cdd`, `#000000`, `#31b55c`]
-      }]
-    },
-    options: {
-      plugins: {
-        datalabels: {
-          display: false
-        }
-      },
-      tooltips: {
-        callbacks: {
-          label: (tooltipItem, data) => {
-            const allData = data.datasets[tooltipItem.datasetIndex].data;
-            const tooltipData = allData[tooltipItem.index];
-            const total = allData.reduce((acc, it) => acc + parseFloat(it));
-            const tooltipPercentage = Math.round((tooltipData / total) * 100);
-            return `${data.labels[tooltipItem.index]}(${tooltipData}) — ${tooltipPercentage}%`;
-          }
-        },
-        displayColors: false,
-        backgroundColor: `#ffffff`,
-        bodyFontColor: `#000000`,
-        borderColor: `#000000`,
-        borderWidth: 1,
-        cornerRadius: 0,
-        xPadding: 15,
-        yPadding: 15
-      },
-      title: {
-        display: true,
-        text: `DONE BY: TAGS`,
-        fontSize: 16,
-        fontColor: `#000000`
-      },
-      legend: {
-        position: `left`,
-        labels: {
-          boxWidth: 15,
-          padding: 25,
-          fontStyle: 500,
-          fontColor: `#000000`,
-          fontSize: 13
-        }
-      }
-    }
-  });
+  chartTags.data.datasets[0].data = dataChartTasksTags.data;
+  chartColors.data.datasets[0].data = dataChartTasksColor.datasets.data;
 
-  createNewChart(colorsCtx, {
-    plugins: [ChartDataLabels],
-    type: `pie`,
-    data: {
-      labels: dataChartTasksColor.labels,
-      datasets: [dataChartTasksColor.datasets]
-    },
-    options: {
-      plugins: {
-        datalabels: {
-          display: false
-        }
-      },
-      tooltips: {
-        callbacks: {
-          label: (tooltipItem, data) => {
-            const allData = data.datasets[tooltipItem.datasetIndex].data;
-            const tooltipData = allData[tooltipItem.index];
-            const total = allData.reduce((acc, it) => acc + parseFloat(it));
-            const tooltipPercentage = Math.round((tooltipData / total) * 100);
-            return `${data.labels[tooltipItem.index]}(${tooltipData}) — ${tooltipPercentage}%`;
-          }
-        },
-        displayColors: false,
-        backgroundColor: `#ffffff`,
-        bodyFontColor: `#000000`,
-        borderColor: `#000000`,
-        borderWidth: 1,
-        cornerRadius: 0,
-        xPadding: 15,
-        yPadding: 15
-      },
-      title: {
-        display: true,
-        text: `DONE BY: COLORS`,
-        fontSize: 16,
-        fontColor: `#000000`
-      },
-      legend: {
-        position: `left`,
-        labels: {
-          boxWidth: 15,
-          padding: 25,
-          fontStyle: 500,
-          fontColor: `#000000`,
-          fontSize: 13
-        }
-      }
-    }
-  });
+  chartTags.update();
+  chartColors.update();
+};
+
+const _onInputDateChange = () => {
+  updateCharts();
 };
 
 const tasksList = createTasksList(
@@ -313,33 +226,147 @@ tasksContainer.innerHTML = ``;
 renderFiltersList(filtersList);
 renderTasksList(tasksList);
 
+const inputDate = document.querySelector(`.statistic__period-input`);
+
 const tasksBtn = document.querySelector(`#control__task`);
 const statisticsBtn = document.querySelector(`#control__statistic`);
 
 const taskContainer = document.querySelector(`.board.container`);
 const statisticContainer = document.querySelector(`.statistic.container`);
 
+const tagsCtx = document.querySelector(`.statistic__tags`);
+const colorsCtx = document.querySelector(`.statistic__colors`);
+
 const allContainers = [taskContainer, statisticContainer];
 
-flatpickr(
-    `.statistic__period-input`,
+const selectDateStatsistics = flatpickr(
+    inputDate,
     {
       mode: `range`,
       altInput: true,
       altFormat: `Y-m-d`,
       dateFormat: `Y-m-d`,
-      defaultDate: [`2019-03-01`, Date.now()]
+      defaultDate: [
+        moment(Date.now()).startOf(`week`).format(`YYYY-MM-DD`),
+        moment(Date.now()).startOf(`week`).add(`day`, 6).format(`YYYY-MM-DD`)
+      ]
     }
 );
 
 tasksBtn.addEventListener(`click`, openTasksContainer);
 statisticsBtn.addEventListener(`click`, openStatisticContainer);
-
-const ChartDataLabels = {};
+inputDate.addEventListener(`change`, _onInputDateChange);
 
 [`.statistic__tags-wrap`, `.statistic__colors-wrap`].forEach((it) => {
   document.querySelector(it).classList.remove(HIDDEN_CLASS);
 });
 
-const tagsCtx = document.querySelector(`.statistic__tags`);
-const colorsCtx = document.querySelector(`.statistic__colors`);
+const ChartDataLabels = {};
+
+const dataChartTasksColor = getDataTasksColors();
+const dataChartTasksTags = getDataTasksTags();
+
+const chartTags = new Chart(tagsCtx, {
+  plugins: [ChartDataLabels],
+  type: `pie`,
+  data: {
+    labels: dataChartTasksTags.labels,
+    datasets: [{
+      data: dataChartTasksTags.data,
+      backgroundColor: [`#ff3cb9`, `#ffe125`, `#0c5cdd`, `#000000`, `#31b55c`]
+    }]
+  },
+  options: {
+    plugins: {
+      datalabels: {
+        display: false
+      }
+    },
+    tooltips: {
+      callbacks: {
+        label: (tooltipItem, data) => {
+          const allData = data.datasets[tooltipItem.datasetIndex].data;
+          const tooltipData = allData[tooltipItem.index];
+          const total = allData.reduce((acc, it) => acc + parseFloat(it));
+          const tooltipPercentage = Math.round((tooltipData / total) * 100);
+          return `${data.labels[tooltipItem.index]}(${tooltipData}) — ${tooltipPercentage}%`;
+        }
+      },
+      displayColors: false,
+      backgroundColor: `#ffffff`,
+      bodyFontColor: `#000000`,
+      borderColor: `#000000`,
+      borderWidth: 1,
+      cornerRadius: 0,
+      xPadding: 15,
+      yPadding: 15
+    },
+    title: {
+      display: true,
+      text: `DONE BY: TAGS`,
+      fontSize: 16,
+      fontColor: `#000000`
+    },
+    legend: {
+      position: `left`,
+      labels: {
+        boxWidth: 15,
+        padding: 25,
+        fontStyle: 500,
+        fontColor: `#000000`,
+        fontSize: 13
+      }
+    }
+  }
+});
+
+const chartColors = new Chart(colorsCtx, {
+  plugins: [ChartDataLabels],
+  type: `pie`,
+  data: {
+    labels: dataChartTasksColor.labels,
+    datasets: [dataChartTasksColor.datasets]
+  },
+  options: {
+    plugins: {
+      datalabels: {
+        display: false
+      }
+    },
+    tooltips: {
+      callbacks: {
+        label: (tooltipItem, data) => {
+          const allData = data.datasets[tooltipItem.datasetIndex].data;
+          const tooltipData = allData[tooltipItem.index];
+          const total = allData.reduce((acc, it) => acc + parseFloat(it));
+          const tooltipPercentage = Math.round((tooltipData / total) * 100);
+          return `${data.labels[tooltipItem.index]}(${tooltipData}) — ${tooltipPercentage}%`;
+        }
+      },
+      displayColors: false,
+      backgroundColor: `#ffffff`,
+      bodyFontColor: `#000000`,
+      borderColor: `#000000`,
+      borderWidth: 1,
+      cornerRadius: 0,
+      xPadding: 15,
+      yPadding: 15
+    },
+    title: {
+      display: true,
+      text: `DONE BY: COLORS`,
+      fontSize: 16,
+      fontColor: `#000000`
+    },
+    legend: {
+      position: `left`,
+      labels: {
+        boxWidth: 15,
+        padding: 25,
+        fontStyle: 500,
+        fontColor: `#000000`,
+        fontSize: 13
+      }
+    }
+  }
+});
