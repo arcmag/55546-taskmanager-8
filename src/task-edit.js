@@ -10,6 +10,11 @@ const Color = {
   pink: `card--pink`,
 };
 
+const StatusEditForm = {
+  SUBMIT: `submit`,
+  DELETE: `delete`
+};
+
 export default class TaskEdit extends Component {
   constructor(data) {
     super();
@@ -221,8 +226,9 @@ export default class TaskEdit extends Component {
               </div>
             </div>
 
-            <label class="card__img-wrap card__img-wrap--empty">
+            <label class="card__img-wrap">
               <input type="file" class="card__img-input visually-hidden" name="img" />
+              ${this._picture && `<img src="${this._picture}" alt="task picture" class="card__img">`}
             </label>
 
             <div class="card__colors-inner">
@@ -242,18 +248,54 @@ export default class TaskEdit extends Component {
     </article>`.trim();
   }
 
+  disabledForm(status) {
+    this._card.classList.remove(`shake`);
+    this._card.classList.remove(`card__inner--submit-error`);
+
+    [...this._formElements].forEach((it) => {
+      it.setAttribute(`disabled`, true);
+    });
+
+    if (status === StatusEditForm.SUBMIT) {
+      this._btnSubmit.innerHTML = `Saving...`;
+    } else if (status === StatusEditForm.DELETE) {
+      this._btnDelete.innerHTML = `Deleting...`;
+    }
+  }
+
+  includedForm(status) {
+    this._card.classList.add(`shake`);
+    this._card.classList.add(`card__inner--submit-error`);
+
+    [...this._formElements].forEach((it) => {
+      it.removeAttribute(`disabled`);
+    });
+
+    if (status === StatusEditForm.SUBMIT) {
+      this._btnSubmit.innerHTML = `save`;
+    } else if (status === StatusEditForm.DELETE) {
+      this._btnDelete.innerHTML = `delete`;
+    }
+  }
+
   cache() {
     this._form = this._element.querySelector(`.card__form`);
+    this._card = this._element.querySelector(`.card__inner`);
+    this._formElements = this._element.querySelectorAll(`textarea, input, button`);
     this._deadlineToggle = this._element.querySelector(`.card__date-deadline-toggle`);
     this._repeatToggle = this._element.querySelector(`.card__repeat-toggle`);
     this._btnDelete = this._element.querySelector(`.card__delete`);
+    this._btnSubmit = this._element.querySelector(`.card__save`);
   }
 
   uncache() {
     this._form = null;
+    this._card = null;
+    this._formElements = null;
     this._deadlineToggle = null;
     this._repeatToggle = null;
     this._btnDelete = null;
+    this._btnSubmit = null;
   }
 
   bind() {

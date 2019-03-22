@@ -140,8 +140,9 @@ export default class Task extends Component {
               </div>
             </div>
 
-            <label class="card__img-wrap card__img-wrap--empty">
+            <label class="card__img-wrap">
               <input type="file" class="card__img-input visually-hidden" name="img" />
+              ${this._picture && `<img src="${this._picture}" alt="task picture" class="card__img">`}
             </label>
 
             <div class="card__colors-inner">
@@ -183,5 +184,19 @@ export default class Task extends Component {
     this._color = data.color;
     this._repeatingDays = data.repeatingDays;
     this._dueDate = data.dueDate;
+  }
+
+  toRAW() {
+    return {
+      'id': this._id,
+      'title': this._title,
+      'due_date': this._dueDate,
+      'tags': [...this._tags.values()],
+      'picture': this._picture,
+      'repeating_days': this._repeatingDays,
+      'color': this._color,
+      'is_favorite': this._isFavorite,
+      'is_done': this._isDone,
+    };
   }
 }
