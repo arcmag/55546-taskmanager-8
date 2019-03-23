@@ -191,10 +191,10 @@ export default class TaskEdit extends Component {
             <div class="card__details">
               <div class="card__dates">
                 <button class="card__date-deadline-toggle" type="button">
-                  date: <span class="card__date-status">${this._state.isDate ? `yes` : `no`}</span>
+                  date: <span class="card__date-status">${this._dueDate ? `yes` : `no`}</span>
                 </button>
 
-                <fieldset class="card__date-deadline" ${!this._state.isDate && `disabled`}>
+                <fieldset class="card__date-deadline" ${!this._dueDate && `disabled`}>
                   <label class="card__input-deadline-wrap">
                     <input class="card__date" type="text" value="${date.format(`DD MMMM`)}" name="date" />
                   </label>
@@ -245,7 +245,7 @@ export default class TaskEdit extends Component {
           </div>
         </div>
       </form>
-    </article>`.trim();
+    </article>`;
   }
 
   disabledForm(status) {
@@ -281,6 +281,8 @@ export default class TaskEdit extends Component {
   cache() {
     this._form = this._element.querySelector(`.card__form`);
     this._card = this._element.querySelector(`.card__inner`);
+    this._cardDate = this._element.querySelector(`.card__date`);
+    this._cardTime = this._element.querySelector(`.card__time`);
     this._formElements = this._element.querySelectorAll(`textarea, input, button`);
     this._deadlineToggle = this._element.querySelector(`.card__date-deadline-toggle`);
     this._repeatToggle = this._element.querySelector(`.card__repeat-toggle`);
@@ -291,6 +293,8 @@ export default class TaskEdit extends Component {
   uncache() {
     this._form = null;
     this._card = null;
+    this._cardDate = null;
+    this._cardTime = null;
     this._formElements = null;
     this._deadlineToggle = null;
     this._repeatToggle = null;
@@ -304,27 +308,25 @@ export default class TaskEdit extends Component {
     this._repeatToggle.addEventListener(`click`, this._onChangeRepeated);
     this._btnDelete.addEventListener(`click`, this._onDeleteButtonClick);
 
-    if (this._state.isDate) {
-      flatpickr(
-          `.card__date`,
-          {
-            altInput: true,
-            altFormat: `j F`,
-            dateFormat: `j F`
-          }
-      );
+    flatpickr(
+        this._cardDate,
+        {
+          altInput: true,
+          altFormat: `j F`,
+          dateFormat: `j F`
+        }
+    );
 
-      flatpickr(
-          `.card__time`,
-          {
-            enableTime: true,
-            noCalendar: true,
-            altInput: true,
-            altFormat: `h:i K`,
-            dateFormat: `h:i K`
-          }
-      );
-    }
+    flatpickr(
+        this._cardTime,
+        {
+          enableTime: true,
+          noCalendar: true,
+          altInput: true,
+          altFormat: `h:i K`,
+          dateFormat: `h:i K`
+        }
+    );
   }
 
   unbind() {
