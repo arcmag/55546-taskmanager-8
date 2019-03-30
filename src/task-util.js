@@ -1,8 +1,10 @@
-import {createRandomTask} from './data';
 import {updateFiltersList} from './filter-util';
 import Task from './task';
 import TaskEdit from './task-edit';
 import BackendAPI from './backend-api';
+
+import Store from './store';
+import Provider from './provider';
 
 const StatusEditForm = {
   SUBMIT: `submit`,
@@ -11,10 +13,14 @@ const StatusEditForm = {
 
 const HIDDEN_CLASS = `visually-hidden`;
 
-const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
+const AUTHORIZATION_NUMBER = 3571239485124;
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${AUTHORIZATION_NUMBER}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/task-manager`;
+const TASKS_STORE_KEY = `tasks-store-key`;
 
 const api = new BackendAPI({endPoint: END_POINT, authorization: AUTHORIZATION});
+const store = new Store({key: TASKS_STORE_KEY, storage: localStorage});
+const provider = new Provider({api, store, generateId: () => String(Date.now())});
 
 const tasksContainer = document.querySelector(`.board__tasks`);
 tasksContainer.innerHTML = ``;
@@ -23,17 +29,17 @@ const boardNoTasks = document.querySelector(`.board__no-tasks`);
 boardNoTasks.classList.remove(HIDDEN_CLASS);
 boardNoTasks.innerHTML = `Loading tasks...`;
 
-const createDataTasksList = (numberTask) => {
-  const dataTasks = [];
+const createTasksList = (dataTasksList) => dataTasksList.map((it) => createTask(it));
 
-  for (let i = 0; i < numberTask; i++) {
-    dataTasks.push(createRandomTask());
+const taskDelete = (delTask) => {
+  for (let i = 0, l = tasksList.length; i < l; i++) {
+    if (tasksList[i] === delTask) {
+      return tasksList.splice(i, 1);
+    }
   }
 
-  return dataTasks;
+  return false;
 };
-
-const createTasksList = (dataTasksList) => dataTasksList.map((it) => createTask(it));
 
 const createTask = (data) => {
   const task = new Task(data);
@@ -49,7 +55,7 @@ const createTask = (data) => {
     task.update(newData);
     taskEdit.disabledForm(StatusEditForm.SUBMIT);
 
-    api.updateTask({id: task._id, data: task.toRAW()})
+    provider.updateTask({id: task._id, data: task.toRAW()})
       .then(() => {
         task.render();
         tasksContainer.replaceChild(task.element, taskEdit.element);
@@ -62,31 +68,19 @@ const createTask = (data) => {
 
   taskEdit.onDelete = () => {
     taskEdit.disabledForm(StatusEditForm.DELETE);
-    api.deleteTask({id: task._id})
-      .then(() => api.getTasks())
-      .then(() => {
-        taskEdit.element.remove();
-        taskEdit.unrender();
-        taskDelete(task);
-        updateFiltersList();
-      })
-      .catch(() => {
-        taskEdit.includedForm(StatusEditForm.DELETE);
-      });
+
+    provider.deleteTask({id: task._id}).then(() => {
+      taskEdit.element.remove();
+      taskEdit.unrender();
+      taskDelete(task);
+      updateFiltersList();
+    })
+    .catch(() => {
+      taskEdit.includedForm(StatusEditForm.DELETE);
+    });
   };
 
   return task;
-};
-
-const taskDelete = (delTask) => {
-  for (let i = 0, l = tasksList.length; i < l; i++) {
-    const task = tasksList[i];
-
-    if (task === delTask) {
-      tasksList.splice(i, 1);
-      return;
-    }
-  }
 };
 
 const renderTask = (task) => tasksContainer.appendChild(task.render());
@@ -95,7 +89,7 @@ const renderTasksList = (tasksList) => tasksList.forEach((it) => renderTask(it))
 
 let tasksList = [];
 
-api.getTasks()
+provider.getTasks()
   .then((tasks) => {
     boardNoTasks.classList.add(HIDDEN_CLASS);
     tasksList = createTasksList(tasks);
@@ -106,9 +100,17 @@ api.getTasks()
     boardNoTasks.innerHTML = `Something went wrong while loading your tasks. Check your connection or try again later`;
   });
 
+window.addEventListener(`offline`, () => {
+  document.title = `${document.title}[OFFLINE]`;
+});
+
+window.addEventListener(`online`, () => {
+  provider.syncTasks();
+  document.title = document.title.split(`[OFFLINE]`)[0];
+});
+
 export {
   tasksList,
-  createDataTasksList,
   createTask,
   createTasksList,
   renderTask,

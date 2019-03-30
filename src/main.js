@@ -1,8 +1,6 @@
-import {filtersList, renderFiltersList} from './filter-util';
-import {} from './task-util';
-import {updateCharts} from './chart-util.js';
-
-renderFiltersList(filtersList);
+import './filter-util';
+import './task-util';
+import {updateCharts} from './chart-util';
 
 const HIDDEN_CLASS = `visually-hidden`;
 

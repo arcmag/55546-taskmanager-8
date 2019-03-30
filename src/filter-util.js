@@ -71,6 +71,7 @@ const renderFilter = (filter) => filtersContainer.appendChild(filter.render());
 const renderFiltersList = (filtersList) => filtersList.forEach((it) => renderFilter(it));
 
 const filtersList = createFiltersList();
+renderFiltersList(filtersList);
 
 export {
   filtersList,
